@@ -92,4 +92,44 @@ class TesteBanco(unittest.TestCase):
         banco.cadastrar(conta)
         banco.creditar("123", 100)
         self.assertEqual(banco.saldo("123"), conta.get_saldo())
+
+    def teste_transferir(self):
+        banco = Banco()
+        conta = Conta("123")
+        conta2 = Conta("234")
+        banco.cadastrar(conta)
+        banco.cadastrar(conta2)
+        banco.creditar("123", 20)
+        banco.transferir("123","234",10)
+        self.assertEqual(banco.saldo("123"),conta.get_saldo())
+        self.assertEqual(banco.saldo("234"), conta2.get_saldo())
     
+    def teste_taxa_poupanca(self):
+        banco = Banco()
+        self.assertEqual(banco.get_taxa_poupanca(), 0.001)
+        banco.set_taxa_poupanca(0.1)
+        self.assertEqual(banco.get_taxa_poupanca(), 0.1)
+    
+    def teste_taxa_imposto(self):
+        banco = Banco()
+        self.assertEqual(banco.get_taxa_imposto(), 0.001)
+        banco.set_taxa_imposto(0.1)
+        self.assertEqual(banco.get_taxa_imposto(), 0.1)
+
+    def teste_render_juros(self):
+        conta = ContaPoupanca("123")
+        banco = Banco()
+        banco.cadastrar(conta)
+        banco.creditar("123", 10)
+        banco.render_juros("123")
+        self.assertEqual(conta.get_saldo(), 10.01)
+    
+    def teste_render_bonus(self):
+        conta = ContaEspecial("123")
+        banco = Banco()
+        banco.cadastrar(conta)
+        banco.creditar('123',10)
+        banco.render_bonus("123")
+        self.assertEqual(conta.get_saldo(), 10.1)
+    
+
