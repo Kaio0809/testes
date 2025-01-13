@@ -1,9 +1,11 @@
 import unittest
-from sisbanco import *
+from bugs import *
 
 class TesteConta(unittest.TestCase):
     def teste_saldo(self):
         conta = Conta("123")
+        self.assertEqual(conta.get_saldo(), 0.0)
+        
         self.assertEqual(conta.get_saldo(), 0.0)
 
     def teste_creditar(self):
@@ -36,9 +38,9 @@ class TesteContaEspecial(unittest.TestCase):
         conta = ContaEspecial("123")
         conta.creditar(10)
         conta.render_bonus()
-        self.assertEqual(conta.get_saldo(), 10,1)
+        self.assertEqual(conta.get_saldo(), 10.1)
         conta.render_bonus()
-        self.assertEqual(conta.get_saldo(), 10,1)
+        self.assertEqual(conta.get_saldo(), 10.1)
     
     def teste_creditar(self):
         conta = ContaEspecial("123")
@@ -124,12 +126,11 @@ class TesteBanco(unittest.TestCase):
         banco.render_juros("123")
         self.assertEqual(conta.get_saldo(), 10.01)
     
-    def teste_render_bonus(self):
+    def teste_rende_bonus(self):
         conta = ContaEspecial("123")
-        banco = Banco()
-        banco.cadastrar(conta)
-        banco.creditar('123',10)
-        banco.render_bonus("123")
-        self.assertEqual(conta.get_saldo(), 10.1)
-    
-
+        conta.creditar(10)  
+        self.assertEqual(conta.get_saldo(), 10)  
+        conta.render_bonus()  
+        self.assertEqual(conta.get_saldo(), 10.1)  
+        conta.render_bonus()
+        self.assertEqual(conta.get_saldo(), 10.1) 

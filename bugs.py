@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 class ContaAbstrata(ABC):
    def __init__(self, numero:str):
       self.__numero = numero
-      self._saldo = 0.0
+      self.__saldo = 0.0
 
    def creditar(self, valor:float) -> None:
-      self._saldo += valor
+      self.__saldo += valor
    
    @abstractmethod
    def debitar(self, valor:float) -> None:
@@ -16,7 +16,7 @@ class ContaAbstrata(ABC):
       return self.__numero 
    
    def get_saldo(self) -> float:
-      return self._saldo
+      return self.__saldo
 
 
 class Conta(ContaAbstrata):
@@ -24,7 +24,7 @@ class Conta(ContaAbstrata):
       super().__init__(numero)
 
    def debitar(self, valor:float) -> None:
-      self._saldo -= valor
+      self.__saldo -= valor
 
 class ContaPoupanca(Conta):
    def __init__(self, numero:str):
@@ -41,10 +41,9 @@ class ContaEspecial(Conta):
 
    def render_bonus(self) -> None:
       super().creditar(self.__bonus)
-      self.__bonus = 0
 
    def creditar(self, valor:float) -> None:
-      self.__bonus += valor*0.01
+      self.__bonus += valor * 0.01
       super().creditar(valor)
 
 class ContaImposto(ContaAbstrata):
@@ -53,7 +52,7 @@ class ContaImposto(ContaAbstrata):
       self.__taxa = 0.001
 
    def debitar(self, valor:float) -> None:
-      self._saldo -= (valor + (valor * self.__taxa))
+      self.__saldo -= (valor - (valor * self.__taxa))
 
    def get_taxa(self) -> float:
       return self.__taxa
@@ -69,9 +68,6 @@ class Banco:
       self.__taxa_imposto = taxa_imposto
 
    def cadastrar(self, conta: ContaAbstrata) -> None:
-      if isinstance(conta, ContaImposto):
-         conta.set_taxa(self.__taxa_imposto)
-
       self.__contas.append(conta)
       
    def procurar(self, numero:str) -> ContaAbstrata:
@@ -83,12 +79,12 @@ class Banco:
    def creditar(self, numero:str, valor:float) -> None:
       conta = self.procurar(numero)
       if conta is not None:
-         conta.creditar(valor)
+         conta.debitar(valor)
 
    def debitar(self, numero:str, valor:float) -> None:
       conta = self.procurar(numero)
       if conta is not None:
-         conta.debitar(valor)
+         conta.creditar(valor)
 
    def saldo(self, numero:str) -> float:
       conta = self.procurar(numero)
@@ -115,9 +111,6 @@ class Banco:
       
    def set_taxa_imposto(self, taxa:float) -> None:
       self.__taxa_imposto = taxa
-      for conta in self.__contas:
-         if isinstance(conta, ContaImposto):
-            conta.set_taxa(self.__taxa_imposto)
 
    def render_juros(self, numero:str) -> None:
       conta = self.procurar(numero)
